@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la Catégorie{% endblock %}
+
+{% block content %}
+    <h3 class="mb-4">Détails de la Catégorie</h3>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <td>{{ category.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ category.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Slug</th>
+                        <td>{{ category.slug }}</td>
+                    </tr>
+                    <tr>
+                        <th>Image</th>
+                        <td>
+                            {% if category.image %}
+                                <img src="{{ asset('path/to/your/images/' ~ category.image) }}" alt="{{ category.nom }}" style="max-width: 100px;">
+                            {% else %}
+                                Pas d'image disponible
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <a href="{{ path('app_category_index') }}" class="btn btn-outline-primary">Retour à la liste</a>
+            {{ include('category/_delete_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

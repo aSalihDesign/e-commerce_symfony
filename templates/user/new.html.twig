@@ -1,0 +1,164 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Création d'un compte utilisateur{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3 border-bottom">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 font-weight-bold">Création d'un nouveau compte</h5>
+            <a href="{{ path('app_user_index') }}" class="btn btn-link text-muted p-0">
+                <i class="bx bx-arrow-back me-1"></i> Retour à la liste
+            </a>
+        </div>
+    </div>
+
+    <div class="card-body px-4 py-4">
+        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+        {# Section Informations personnelles #}
+        <div class="mb-4">
+            <h6 class="text-primary mb-3">
+                <i class="bx bx-user-circle me-2"></i>
+                Informations personnelles
+            </h6>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.prenom, 'Prénom', {
+                            'label_attr': {
+                                'class': 'form-label fw-semibold'
+                            }
+                        }) }}
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bx bx-user text-muted"></i>
+                            </span>
+                            {{ form_widget(form.prenom, {
+                                'attr': {
+                                    'class': 'form-control border-start-0 ps-0',
+                                    'placeholder': 'Entrez le prénom'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.prenom, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.nom, 'Nom', {
+                            'label_attr': {
+                                'class': 'form-label fw-semibold'
+                            }
+                        }) }}
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bx bx-user text-muted"></i>
+                            </span>
+                            {{ form_widget(form.nom, {
+                                'attr': {
+                                    'class': 'form-control border-start-0 ps-0',
+                                    'placeholder': 'Entrez le nom'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.nom, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Section Authentification #}
+        <div class="mb-4">
+            <h6 class="text-primary mb-3">
+                <i class="bx bx-lock-alt me-2"></i>
+                Informations de connexion
+            </h6>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.email, 'Adresse email', {
+                            'label_attr': {
+                                'class': 'form-label fw-semibold'
+                            }
+                        }) }}
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bx bx-envelope text-muted"></i>
+                            </span>
+                            {{ form_widget(form.email, {
+                                'attr': {
+                                    'class': 'form-control border-start-0 ps-0',
+                                    'placeholder': 'exemple@email.com'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.email, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.password, 'Mot de passe', {
+                            'label_attr': {
+                                'class': 'form-label fw-semibold'
+                            }
+                        }) }}
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bx bx-lock text-muted"></i>
+                            </span>
+                            {{ form_widget(form.password, {
+                                'attr': {
+                                    'class': 'form-control border-start-0 ps-0',
+                                    'placeholder': '••••••••'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.password, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Section Rôles #}
+        <div class="mb-4">
+            <h6 class="text-primary mb-3">
+                <i class="bx bx-shield me-2"></i>
+                Rôles et permissions
+            </h6>
+            <div class="form-group">
+                {{ form_label(form.roles, 'Sélectionner les rôles', {
+                    'label_attr': {
+                        'class': 'form-label fw-semibold'
+                    }
+                }) }}
+                {{ form_widget(form.roles, {
+                    'attr': {
+                        'class': 'form-select',
+                        'data-placeholder': 'Sélectionnez les rôles'
+                    }
+                }) }}
+                {{ form_errors(form.roles, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                <small class="form-text text-muted">
+                    <i class="bx bx-info-circle me-1"></i>
+                    Les rôles déterminent les permissions de l'utilisateur dans l'application.
+                </small>
+            </div>
+        </div>
+
+        {# Boutons d'action #}
+        <div class="d-flex gap-3 justify-content-end pt-3 border-top">
+            <a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary d-flex align-items-center gap-1">
+                <i class="bx bx-x"></i>
+                Annuler
+            </a>
+            <button type="submit" class="btn btn-primary d-flex align-items-center gap-1">
+                <i class="bx bx-check"></i>
+                Créer le compte
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

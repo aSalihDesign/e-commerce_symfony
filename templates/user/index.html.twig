@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block content %}
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="mb-0 font-weight-bold">Comptes utilisateurs</h5>
+        </div>
+        
+        <div class="card-body px-4 py-3">
+            {# Barre d'outils supérieure avec recherche et bouton d'ajout #}
+            <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4">
+                <div class="search-wrapper position-relative">
+                    <i class="bx bx-search position-absolute text-muted" style="left: 10px; top: 50%; transform: translateY(-50%)"></i>
+                    <input type="text" placeholder="Rechercher un utilisateur..." class="form-control ps-4" style="min-width: 300px; padding-left: 35px;">
+                </div>
+                <a href="{{ path('app_user_new') }}" class="btn btn-primary d-flex align-items-center gap-2">
+                    <i class="bx bx-user-plus"></i>
+                    <span>Ajouter un compte</span>
+                </a>
+            </div>
+
+            {# Table responsive avec design amélioré #}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="py-3">Utilisateur</th>
+                            <th class="py-3">Email</th>
+                            <th class="py-3">Rôles</th>
+                            <th class="py-3 text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td style="min-width: 250px;">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar-wrapper" style="width: 45px; height: 45px;">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white" 
+                                             style="width: 100%; height: 100%; background: linear-gradient(45deg, #696cff, #8592d6);">
+                                            <span style="font-size: 16px; font-weight: 500;">
+                                                {{ user.prenom|first|upper }}{{ user.nom|first|upper }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ user.prenom }} {{ user.nom }}</h6>
+                                        <small class="text-muted">{{ user.email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-muted">
+                                <i class="bx bx-envelope me-1 text-muted"></i>
+                                {{ user.email }}
+                            </td>
+                            <td>
+                                {% for role in user.roles %}
+                                    {% if role != 'ROLE_USER' %}
+                                        {% set badge_color = {
+                                            'ROLE_ADMIN': 'primary',
+                                            'ROLE_MANAGER': 'warning',
+                                            'ROLE_EDITOR': 'info',
+                                            'ROLE_MODERATOR': 'success',
+                                            'ROLE_SUPERVISOR': 'primary'
+                                        }[role] ?? 'secondary' %}
+                                        
+                                        <span class="badge rounded-pill bg-label-{{ badge_color }} me-1">
+                                            {{ role|replace({'ROLE_': ''}) }}
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a href="{{ path('app_user_show', {'id': user.id}) }}" 
+                                       class="btn btn-sm btn-outline-secondary">
+                                        <i class="bx bx-show"></i>
+                                    </a>
+                                    <a href="{{ path('app_user_edit', {'id': user.id}) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bx bx-edit-alt"></i>
+                                    </a>
+                                    <button type="button" 
+                                            onclick="deleteUser({{ user.id }})" 
+                                            class="btn btn-sm btn-outline-danger">
+                                        <i class="bx bx-trash"></i>
+                                    </button>
+                                </div>
+
+                                <form id="deleteUserForm{{ user.id }}" method="post" 
+                                      action="{{ path('app_user_delete', {'id': user.id}) }}" 
+                                      style="display: none;">
+                                    <input type="hidden" name="_token" 
+                                           value="{{ csrf_token('delete' ~ user.id) }}">
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="bx bx-user mb-2" style="font-size: 40px;"></i>
+                                    <p class="mb-0">Aucun utilisateur trouvé</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function deleteUser(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+                document.getElementById('deleteUserForm' + id).submit();
+            }
+        }
+    </script>
+{% endblock %}

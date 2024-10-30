@@ -1,0 +1,188 @@
+    {% extends 'base.html.twig' %}
+
+    {% block title %}Liste des produits{% endblock %}
+
+    {% block content %}
+
+        {# Statistiques des produits #}
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h3 class="fw-semibold mb-2">{{ products|length }}</h3>
+                        <p class="text-muted mb-0">Total Produits</p>
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <div class="rounded p-2" style="background-color: rgba(0, 123, 255, 0.1);">
+                                <i class="bx bx-shopping-bag text-primary" style="font-size: 24px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h3 class="fw-semibold mb-2">{{ products|filter(p => p.quantity > 0)|length }}</h3>
+                        <p class="text-muted mb-0">En stock</p>
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <div class="rounded p-2" style="background-color: rgba(40, 167, 69, 0.1);">
+                                <i class="bx bx-check-circle text-success" style="font-size: 24px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h3 class="fw-semibold mb-2">{{ products|filter(p => p.quantity == 0)|length }}</h3>
+                        <p class="text-muted mb-0">En rupture</p>
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <div class="rounded p-2" style="background-color: rgba(255, 193, 7, 0.1);">
+                                <i class="bx bx-error-circle text-warning" style="font-size: 24px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h3 class="fw-semibold mb-2">
+                            {{ products|reduce((total, product) => total + product.prix * product.quantity, 0)|number_format(0, '.', ' ') }}
+                        </h3>
+                        <p class="text-muted mb-0">Valeur du stock (FCFA)</p>
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <div class="rounded p-2" style="background-color: rgba(23, 162, 184, 0.1);">
+                                <i class="bx bx-dollar text-info" style="font-size: 24px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="mb-0 font-weight-bold">Produits</h5>
+            </div>
+            
+            <div class="card-body px-4 py-3">
+                {# Barre d'outils supérieure avec recherche et bouton d'ajout #}
+                <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4">
+                    <div class="search-wrapper position-relative">
+                        <i class="bx bx-search position-absolute text-muted" style="left: 10px; top: 50%; transform: translateY(-50%)"></i>
+                    <input type="text" 
+                        id="productSearch"
+                        placeholder="Rechercher un produit..." 
+                        class="form-control ps-4" 
+                        style="min-width: 300px; padding-left: 35px;"
+                        value="{{ searchTerm|default('') }}">
+                    </div>
+                    <a href="{{ path('app_product_new') }}" class="btn btn-primary d-flex align-items-center gap-2">
+                        <i class="bx bx-user-plus"></i>
+                        <span>Ajouter un produit</span>
+                    </a>
+                </div>
+
+                {# Table responsive avec design amélioré #}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="py-3">Produit</th>
+                                <th class="py-3">Slug</th>
+                                <th class="py-3">Catégories</th>
+                                <th class="py-3">Prix</th>
+                                <th class="py-3">Quantité</th>
+                                <th class="py-3 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td style="min-width: 250px;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        {% if product.image %}
+                                            <div class="product-image-wrapper" style="width: 60px; height: 60px;">
+                                                <img src="{{ asset('uploads/products/' ~ product.image) }}" 
+                                                    alt="{{ product.nom }}" 
+                                                    class="rounded object-fit-cover"
+                                                    style="width: 100%; height: 100%;">
+                                            </div>
+                                        {% else %}
+                                            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                <i class="bx bx-image text-muted" style="font-size: 24px;"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <h6 class="mb-1">{{ product.nom }}</h6>
+                                            <p class="text-muted small mb-0">{{ product.shortDescription }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-muted">{{ product.slug }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ product.categorie.nom }}</span>
+                                </td>
+                                <td class="fw-bold">{{ product.prix }} FCFA</td>
+                                <td>
+                                    {% if product.quantity > 0 %}
+                                        <span class="badge bg-success-subtle text-success">{{ product.quantity }} en stock</span>
+                                    {% else %}
+                                        <span class="badge bg-danger-subtle text-danger">Rupture de stock</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" 
+                                        class="btn btn-sm btn-outline-primary">
+                                            <i class="bx bx-edit-alt"></i>
+                                        </a>
+                                        <button type="button" 
+                                                onclick="deleteProduct({{ product.id }})" 
+                                                class="btn btn-sm btn-outline-danger">
+                                            <i class="bx bx-trash"></i>
+                                        </button>
+
+                                        <!-- Bouton pour ajouter au panier -->
+                                        <a href="{{ path('cart_add', {'productId': product.id}) }}" 
+                                        class="btn btn-sm btn-outline-success">
+                                            <i class="bx bx-cart"></i> Ajouter au panier
+                                        </a>
+                                    </div>
+
+                                    <form id="deleteProductForm{{ product.id }}" method="post" 
+                                        action="{{ path('app_product_delete', {'id': product.id}) }}" 
+                                        style="display: none;">
+                                        <input type="hidden" name="_token" 
+                                            value="{{ csrf_token('delete' ~ product.id) }}">
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="bx bx-package mb-2" style="font-size: 40px;"></i>
+                                        <p class="mb-0">Aucun produit trouvé</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function deleteProduct(id) {
+                if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+                    document.getElementById('deleteProductForm' + id).submit();
+                }
+            }
+        </script>
+        
+    {% endblock %}

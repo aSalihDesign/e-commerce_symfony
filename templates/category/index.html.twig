@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des catégories{% endblock %}
+
+{% block content %}
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="mb-0 font-weight-bold">Catégories</h5>
+        </div>
+        
+        <div class="card-body px-4 py-3">
+            {# Barre d'outils supérieure avec recherche et bouton d'ajout #}
+            <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4">
+                <div class="search-wrapper position-relative">
+                    <i class="bx bx-search position-absolute text-muted" style="left: 10px; top: 50%; transform: translateY(-50%)"></i>
+                    <input type="text" placeholder="Rechercher une catégorie..." class="form-control ps-4" style="min-width: 300px; padding-left: 35px;">
+                </div>
+                <a href="{{ path('app_category_new') }}" class="btn btn-primary d-flex align-items-center gap-2">
+                    <i class="bx bx-user-plus"></i>
+                    <span>Ajouter une catégorie</span>
+                </a>
+            </div>
+
+            {# Table responsive avec design amélioré #}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="py-3">Catégorie</th>
+                            <th class="py-3">Slug</th>
+                            <th class="py-3">Catégorie Parent</th>
+                            <th class="py-3 text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td style="min-width: 250px;">
+                                <div class="d-flex align-items-center gap-3">
+                                    {% if category.image %}
+                                        <div class="category-image-wrapper" style="width: 60px; height: 60px;">
+                                            <img src="{{ asset('uploads/categories/' ~ category.image) }}" 
+                                                 alt="{{ category.nom }}" 
+                                                 class="rounded object-fit-cover"
+                                                 style="width: 100%; height: 100%;">
+                                        </div>
+                                    {% else %}
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <i class="bx bx-category text-muted" style="font-size: 24px;"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-1">{{ category.nom }}</h6>
+                                        {% if category.description %}
+                                            <p class="text-muted small mb-0">{{ category.description }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-muted">{{ category.slug }}</td>
+                            <td>
+                                {% if category.parent %}
+                                    <span class="badge bg-secondary-subtle text-secondary">{{ category.parent.nom }}</span>
+                                {% else %}
+                                    <span class="badge bg-light text-muted">Catégorie principale</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a href="{{ path('app_category_edit', {'id': category.id}) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bx bx-edit-alt"></i>
+                                    </a>
+                                    <button type="button" 
+                                            onclick="deleteCategory({{ category.id }})" 
+                                            class="btn btn-sm btn-outline-danger">
+                                        <i class="bx bx-trash"></i>
+                                    </button>
+                                </div>
+
+                                <form id="deleteCategoryForm{{ category.id }}" method="post" 
+                                      action="{{ path('app_category_delete', {'id': category.id}) }}" 
+                                      style="display: none;">
+                                    <input type="hidden" name="_token" 
+                                           value="{{ csrf_token('delete' ~ category.id) }}">
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="bx bx-category mb-2" style="font-size: 40px;"></i>
+                                    <p class="mb-0">Aucune catégorie trouvée</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function deleteCategory(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')) {
+                document.getElementById('deleteCategoryForm' + id).submit();
+            }
+        }
+    </script>
+{% endblock %}

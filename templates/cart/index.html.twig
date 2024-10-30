@@ -1,0 +1,135 @@
+{% extends 'home/index.html.twig' %}
+
+{% block title %}Mon Panier{% endblock %}
+
+{% block body %}
+<div class="container-xxl">
+    {# Messages flash #}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="mb-0 font-weight-bold">Mon Panier</h5>
+        </div>
+        
+        <div class="card-body px-4 py-3">
+            {% if cart is empty %}
+                <div class="text-center py-5">
+                    <div class="text-muted">
+                        <i class="bx bx-cart mb-2" style="font-size: 40px;"></i>
+                        <p class="mb-3">Votre panier est vide</p>
+                        <a href="{{ path('app_product_index') }}" class="btn btn-primary">
+                            <i class="bx bx-shopping-bag me-2"></i>Continuer mes achats
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="py-3">Produit</th>
+                                <th class="py-3">Prix unitaire</th>
+                                <th class="py-3">Quantité</th>
+                                <th class="py-3">Total</th>
+                                <th class="py-3 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart %}
+                                <tr>
+                                    <td style="min-width: 250px;">
+                                        <div class="d-flex align-items-center gap-3">
+                                            {% if item.image is defined %}
+                                                <div style="width: 60px; height: 60px;">
+                                                    <img src="{{ asset('uploads/products/' ~ item.image) }}" 
+                                                        alt="{{ item.name }}" 
+                                                        class="rounded object-fit-cover"
+                                                        style="width: 100%; height: 100%;">
+                                                </div>
+                                            {% else %}
+                                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                    <i class="bx bx-image text-muted" style="font-size: 24px;"></i>
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-1">{{ item.name }}</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="fw-bold">{{ item.price }} FCFA</td>
+                                    <td style="width: 200px;">
+                                        <form action="{{ path('cart_update', {'productId': item.product_id}) }}" 
+                                              method="post" 
+                                              class="d-flex gap-2 align-items-center">
+                                            <input type="number" 
+                                                   name="quantity" 
+                                                   value="{{ item.quantity }}" 
+                                                   min="1"
+                                                   class="form-control"
+                                                   style="max-width: 100px;">
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                <i class="bx bx-refresh"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="fw-bold">{{ item.price * item.quantity }} FCFA</td>
+                                    <td>
+                                        <div class="d-flex gap-2 justify-content-end">
+                                            <a href="{{ path('cart_remove', {'productId': item.product_id}) }}" 
+                                               class="btn btn-sm btn-outline-danger">
+                                                <i class="bx bx-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            <tr class="bg-light">
+                                <td colspan="3" class="text-end fw-bold">Total</td>
+                                <td class="fw-bold">{{ total }} FCFA</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{{ path('app_product_index') }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                        <i class="bx bx-arrow-back"></i>
+                        <span>Continuer mes achats</span>
+                    </a>
+
+                    {% if app.user %}
+                        {# Utilisateur connecté #}
+                        <a href="{{ path('checkout') }}" class="btn btn-success d-flex align-items-center gap-2">
+                            <i class="bx bx-check"></i>
+                            <span>Passer la commande</span>
+                        </a>
+                    {% else %}
+                        {# Utilisateur non connecté #}
+                        <div class="text-end">
+                            <a href="{{ path('app_register') }}" class="btn btn-primary d-flex align-items-center gap-2 mb-2">
+                                <i class="bx bx-user-plus"></i>
+                                <span>Créer un compte pour commander</span>
+                            </a>
+                            <div class="text-muted small">
+                                Déjà client ? 
+                                <a href="{{ path('app_login') }}" class="text-primary text-decoration-none">
+                                    Se connecter
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>    
+{% endblock %}

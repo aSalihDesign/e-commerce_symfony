@@ -1,0 +1,87 @@
+{% extends 'home/index.html.twig' %}
+
+{% block title %}Boutique{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    {# Barre de statut #}
+    <div class="mb-8 flex justify-between items-center">
+        <h1 class="text-3xl font-bold">Nos Produits</h1>
+        
+        <div class="flex items-center space-x-4">
+            {% if app.user %}
+                <span class="text-gray-600">{{ app.user.email }}</span>
+                <a href="{{ path('app_logout') }}" class="text-red-600 hover:text-red-800">
+                    Déconnexion
+                </a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="text-indigo-600 hover:text-indigo-800">
+                    Connexion
+                </a>
+            {% endif %}
+
+            {# Mini panier #}
+            {% if app.session.get('cart')|length > 0 %}
+                <a href="{{ path('cart_show') }}" class="flex items-center bg-indigo-100 text-indigo-800 px-4 py-2 rounded-lg">
+                    🛒 {{ app.session.get('cart')|length }} article(s)
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Messages flash #}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="mb-4 p-4 rounded-lg {% if type == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {# Grille de produits #}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for product in products %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                {% if product.image %}
+                    <img src="{{ asset('uploads/products/' ~ product.image) }}" alt="{{ product.nom }}" class="w-full h-48 object-cover">
+                {% endif %}
+                
+                <div class="p-4">
+                    <h2 class="text-xl font-bold mb-2">{{ product.nom }}</h2>
+                    <p class="text-gray-600 mb-4">
+                        {% if product.description %}
+                            {{ product.description|slice(0, 100) }}{% if product.description|length > 100 %}...{% endif %}
+                        {% endif %}
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-indigo-600">{{ product.prix }} FCFA</span>
+                        
+                        <form action="{{ path('cart_add', {'productId': product.id}) }}" method="post" class="inline">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" 
+                                    class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                                Ajouter au panier
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-span-full text-center py-8 text-gray-500">
+                Aucun produit disponible pour le moment.
+            </div>
+        {% endfor %}
+    </div>
+
+    {# Bouton Panier flottant si articles présents #}
+    {% if app.session.get('cart')|length > 0 %}
+        <div class="fixed bottom-4 right-4">
+            <a href="{{ path('cart_show') }}" 
+               class="flex items-center space-x-2 bg-indigo-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-indigo-700 transition-colors">
+                <span>🛒</span>
+                <span>Voir le panier ({{ app.session.get('cart')|length }})</span>
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

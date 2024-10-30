@@ -1,0 +1,154 @@
+{# templates/checkout/success.html.twig #}
+{% extends 'home/index.html.twig' %}
+
+{% block title %}Commande confirmée{% endblock %}
+
+{% block body %}
+<div class="container-xxl py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            {# Carte de succès #}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-5">
+                    <div class="text-center mb-5">
+                        <div class="mb-4 position-relative d-inline-block">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-4" style="width: 120px; height: 120px;">
+                                <i class="bx bx-check-circle text-success" style="font-size: 64px; line-height: 1;"></i>
+                            </div>
+                        </div>
+                        <h3 class="mb-2">Merci pour votre commande !</h3>
+                        <p class="text-muted mb-0">
+                            Votre commande <span class="fw-bold">#{{ order.id }}</span> a été enregistrée avec succès.
+                            <br>Nous vous enverrons un email dès que votre commande sera expédiée.
+                        </p>
+                    </div>
+
+                    {# Timeline de commande #}
+                    <div class="position-relative mb-5 px-4">
+                        <div class="progress" style="height: 2px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 25%"></div>
+                        </div>
+                        <div class="row position-relative" style="margin-top: -10px;">
+                            <div class="col-3 text-center">
+                                <div class="bg-success rounded-circle text-white d-inline-flex align-items-center justify-content-center mb-1" style="width: 24px; height: 24px;">
+                                    <i class="bx bx-check"></i>
+                                </div>
+                                <div class="small text-success">Confirmée</div>
+                            </div>
+                            <div class="col-3 text-center">
+                                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-1" style="width: 24px; height: 24px;">
+                                    <i class="bx bx-package text-muted"></i>
+                                </div>
+                                <div class="small text-muted">En préparation</div>
+                            </div>
+                            <div class="col-3 text-center">
+                                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-1" style="width: 24px; height: 24px;">
+                                    <i class="bx bx-truck text-muted"></i>
+                                </div>
+                                <div class="small text-muted">Expédiée</div>
+                            </div>
+                            <div class="col-3 text-center">
+                                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-1" style="width: 24px; height: 24px;">
+                                    <i class="bx bx-home text-muted"></i>
+                                </div>
+                                <div class="small text-muted">Livrée</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Détails de la commande #}
+                    <div class="row">
+                        <div class="col-md-7 mb-4 mb-md-0">
+                            <div class="card border">
+                                <div class="card-header bg-light py-3">
+                                    <h6 class="mb-0 d-flex align-items-center">
+                                        <i class="bx bx-cart me-2"></i>
+                                        Récapitulatif de la commande
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    {% for item in order.items %}
+                                        <div class="d-flex align-items-center mb-3">
+                                            {% if item.product.image is defined %}
+                                                <img src="{{ asset('uploads/products/' ~ item.product.image) }}" 
+                                                     class="rounded me-3" 
+                                                     style="width: 50px; height: 50px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" 
+                                                     style="width: 50px; height: 50px;">
+                                                    <i class="bx bx-image text-muted"></i>
+                                                </div>
+                                            {% endif %}
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">{{ item.product.nom }}</h6>
+                                                <small class="text-muted">Quantité: {{ item.quantity }}</small>
+                                            </div>
+                                            <span class="ms-3 fw-bold">{{ item.price * item.quantity }} FCFA</span>
+                                        </div>
+                                    {% endfor %}
+                                    <hr>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="d-block fw-bold">Total</span>
+                                            <small class="text-muted">TVA incluse</small>
+                                        </div>
+                                        <span class="fs-5 fw-bold text-primary">{{ order.total }} FCFA</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="card border mb-3">
+                                <div class="card-header bg-light py-3">
+                                    <h6 class="mb-0 d-flex align-items-center">
+                                        <i class="bx bx-map me-2"></i>
+                                        Adresse de livraison
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-1">{{ order.user.prenom }} {{ order.user.nom }}</p>
+                                    <p class="mb-1">{{ order.address }}</p>
+                                    <p class="mb-1">{{ order.city }}, {{ order.country }}</p>
+                                    <p class="mb-0">
+                                        <i class="bx bx-phone me-1"></i>
+                                        {{ order.phoneNumber }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="card border mb-3">
+                                <div class="card-header bg-light py-3">
+                                    <h6 class="mb-0 d-flex align-items-center">
+                                        <i class="bx bx-credit-card me-2"></i>
+                                        Mode de paiement
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-0">
+                                        <i class="bx bx-money me-1"></i>
+                                        {% if order.paymentMethod == 'cash_on_delivery' %}
+                                            Paiement à la livraison
+                                        {% else %}
+                                            {{ order.paymentMethod }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <a href="{{ path('app_product_index') }}" class="btn btn-primary w-100">
+                                    <i class="bx bx-shopping-bag me-2"></i>Continuer mes achats
+                                </a>
+                                <a href="{{ path('app_order_index') }}" class="btn btn-link text-muted mt-2">
+                                    <i class="bx bx-package me-1"></i>Voir mes commandes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

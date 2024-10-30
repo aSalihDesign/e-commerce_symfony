@@ -1,0 +1,93 @@
+{# templates/checkout/index.html.twig #}
+{% extends 'home/index.html.twig' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block body %}
+<div class="container-xxl">
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="mb-0 font-weight-bold">Finaliser la commande</h5>
+        </div>
+        
+        <div class="card-body px-4 py-3">
+            <div class="row">
+                <div class="col-md-8">
+                    {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+                    
+                        <div class="mb-3">
+                            {{ form_label(form.address, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.address) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.city, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.city, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.city) }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form_label(form.phoneNumber, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.phoneNumber) }}
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="mb-3">{{ form_label(form.paymentMethod) }}</h6>
+                            <div class="payment-methods">
+                                {{ form_widget(form.paymentMethod) }}
+                                {{ form_errors(form.paymentMethod) }}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="bx bx-check me-2"></i>
+                            Confirmer la commande
+                        </button>
+                    {{ form_end(form) }}
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Résumé de la commande</h6>
+                        </div>
+                        <div class="card-body">
+                            {% for item in cart %}
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>{{ item.name }} x {{ item.quantity }}</span>
+                                    <span class="fw-bold">{{ item.price * item.quantity }} FCFA</span>
+                                </div>
+                            {% endfor %}
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Total</span>
+                                <span class="fw-bold">{{ total }} FCFA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .payment-methods {
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        padding: 1rem;
+    }
+    
+    .payment-methods .form-check {
+        margin-bottom: 0.5rem;
+    }
+    
+    .payment-methods .form-check:last-child {
+        margin-bottom: 0;
+    }
+</style>
+
+{% endblock %}

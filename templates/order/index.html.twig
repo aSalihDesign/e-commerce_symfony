@@ -1,0 +1,197 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des commandes{% endblock %}
+
+{% block content %}
+
+    {# En-tête avec statistiques #}
+    <div class="row mb-4 g-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h3 class="fw-semibold mb-2">{{ orders|length }}</h3>
+                    <p class="text-muted mb-0">Commandes totales</p>
+                    <div class="position-absolute top-0 end-0 p-3">
+                        <div class="rounded p-2" style="background-color: rgba(0, 123, 255, 0.1);">
+                            <i class="bx bx-shopping-bag text-primary" style="font-size: 24px;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h3 class="fw-semibold mb-2">
+                        {{ orders|filter(order => order.status == 'en attente')|length }}
+                    </h3>
+                    <p class="text-muted mb-0">En attente</p>
+                    <div class="position-absolute top-0 end-0 p-3">
+                        <div class="rounded p-2" style="background-color: rgba(255, 193, 7, 0.1);">
+                            <i class="bx bx-time text-warning" style="font-size: 24px;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h3 class="fw-semibold mb-2">
+                        {{ orders|filter(order => order.status == 'en cours')|length }}
+                    </h3>
+                    <p class="text-muted mb-0">En cours</p>
+                    <div class="position-absolute top-0 end-0 p-3">
+                        <div class="rounded p-2" style="background-color: rgba(23, 162, 184, 0.1);">
+                            <i class="bx bx-refresh text-info" style="font-size: 24px;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h3 class="fw-semibold mb-2">
+                        {{ orders|filter(order => order.status == 'terminée')|length }}
+                    </h3>
+                    <p class="text-muted mb-0">Terminées</p>
+                    <div class="position-absolute top-0 end-0 p-3">
+                        <div class="rounded p-2" style="background-color: rgba(40, 167, 69, 0.1);">
+                            <i class="bx bx-check-circle text-success" style="font-size: 24px;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {# Liste des commandes #}
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 font-weight-bold">
+                    <i class="bx bx-list-ul me-2"></i>Liste des commandes
+                </h5>
+                <div class="d-flex gap-2">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="bx bx-filter me-1"></i>Filtrer par statut: {{ app.request.get('status', 'Tous') | capitalize }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ path('app_order_index') }}">Toutes les commandes</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_order_index', {status: 'en attente'}) }}">En attente</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_order_index', {status: 'en cours'}) }}">En cours</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_order_index', {status: 'terminée'}) }}">Terminées</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_order_index', {status: 'annulée'}) }}">Annulées</a></li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-outline-secondary" id="exportButton">
+                        <i class="bx bx-export me-1"></i>Exporter
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body px-4 py-3">
+            {% if orders is empty %}
+                <div class="text-center py-5">
+                    <div class="text-muted">
+                        <i class="bx bx-package mb-2" style="font-size: 40px;"></i>
+                        <p class="mb-3">Aucune commande trouvée</p>
+                        <a href="{{ path('app_product_index') }}" class="btn btn-primary">
+                            <i class="bx bx-shopping-bag me-2"></i>Voir les produits
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0">N° Commande</th>
+                                <th class="border-0">Client</th>
+                                <th class="border-0">Date</th>
+                                <th class="border-0">Statut</th>
+                                <th class="border-0">Total</th>
+                                <th class="border-0">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>
+                                        <span class="fw-bold">#{{ order.id }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-light rounded-circle p-2 me-2">
+                                                <i class="bx bx-user"></i>
+                                            </div>
+                                            <div>
+                                                <span class="d-block">{{ order.user.prenom }} {{ order.user.nom }}</span>
+                                                <small class="text-muted">{{ order.user.email }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <span class="d-block">{{ order.createdAt|date('d/m/Y') }}</span>
+                                            <small class="text-muted">{{ order.createdAt|date('H:i') }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form action="{{ path('app_order_status', {'id': order.id}) }}" 
+                                              method="post" 
+                                              class="d-flex align-items-center gap-2">
+                                            <select name="status" class="form-select form-select-sm" style="width: 130px;"
+                                                    onchange="this.form.submit()">
+                                                <option value="en attente" {{ order.status == 'en attente' ? 'selected' : '' }}>
+                                                    🕒 En attente
+                                                </option>
+                                                <option value="en cours" {{ order.status == 'en cours' ? 'selected' : '' }}>
+                                                    🔄 En cours
+                                                </option>
+                                                <option value="terminée" {{ order.status == 'terminée' ? 'selected' : '' }}>
+                                                    ✅ Terminée
+                                                </option>
+                                                <option value="annulée" {{ order.status == 'annulée' ? 'selected' : '' }}>
+                                                    ❌ Annulée
+                                                </option>
+                                            </select>
+                                            {% set statusColor = {
+                                                'en attente': 'warning',
+                                                'en cours': 'info',
+                                                'terminée': 'success',
+                                                'annulée': 'danger'
+                                            } %}
+                                            <div class="badge bg-{{ statusColor[order.status] }} bg-opacity-10 text-{{ statusColor[order.status] }}" 
+                                                 style="width: 8px; height: 8px; border-radius: 50%;"></div>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold">{{ order.total }} FCFA</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a href="{{ path('app_order_show', {'id': order.id}) }}" 
+                                               class="btn btn-sm btn-primary">
+                                                <i class="bx bx-show"></i>
+                                            </a>
+            
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

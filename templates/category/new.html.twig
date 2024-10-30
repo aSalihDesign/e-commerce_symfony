@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une catégorie{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3 border-bottom">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0 font-weight-bold">Ajouter une catégorie</h5>
+                <p class="text-muted small mb-0">
+                    <i class="bx bx-info-circle me-1"></i>
+                    Remplissez les informations de la nouvelle catégorie
+                </p>
+            </div>
+            <a href="{{ path('app_category_index') }}" class="btn btn-link text-muted p-0">
+                <i class="bx bx-arrow-back me-1"></i> Retour à la liste
+            </a>
+        </div>
+    </div>
+
+    <div class="card-body px-4 py-4">
+        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+        {# Section Informations générales #}
+        <div class="mb-4">
+            <h6 class="text-primary d-flex align-items-center gap-2 mb-3">
+                <i class="bx bx-info-circle"></i>
+                Informations générales
+            </h6>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.nom, 'Nom', {
+                            'label_attr': {
+                                'class': 'form-label fw-semibold'
+                            }
+                        }) }}
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bx bx-tag text-muted"></i>
+                            </span>
+                            {{ form_widget(form.nom, {
+                                'attr': {
+                                    'class': 'form-control border-start-0 ps-0',
+                                    'placeholder': 'Entrez le nom'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.nom, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.slug, 'Slug', {
+                            'label_attr': {
+                                'class': 'form-label fw-semibold'
+                            }
+                        }) }}
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bx bx-link text-muted"></i>
+                            </span>
+                            {{ form_widget(form.slug, {
+                                'attr': {
+                                    'class': 'form-control border-start-0 ps-0',
+                                    'readonly': true
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.slug, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Section Description #}
+        <div class="mb-4">
+            <h6 class="text-primary d-flex align-items-center gap-2 mb-3">
+                <i class="bx bx-text"></i>
+                Description
+            </h6>
+            <div class="form-group">
+                {{ form_widget(form.description, {
+                    'attr': {
+                        'class': 'form-control',
+                        'rows': 4,
+                        'placeholder': 'Entrez la description de la catégorie'
+                    }
+                }) }}
+                {{ form_errors(form.description, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+            </div>
+        </div>
+
+        {# Section Image #}
+        <div class="mb-4">
+            <h6 class="text-primary d-flex align-items-center gap-2 mb-3">
+                <i class="bx bx-image"></i>
+                Image
+            </h6>
+            <div class="form-group">
+                {{ form_widget(form.image, {
+                    'attr': {
+                        'class': 'form-control'
+                    }
+                }) }}
+                {{ form_errors(form.image, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+            </div>
+        </div>
+
+        {# Section Catégorie parent #}
+        <div class="mb-4">
+            <h6 class="text-primary d-flex align-items-center gap-2 mb-3">
+                <i class="bx bx-git-branch"></i>
+                Hiérarchie
+            </h6>
+            <div class="form-group">
+                {{ form_label(form.parent, 'Catégorie parent', {
+                    'label_attr': {
+                        'class': 'form-label fw-semibold'
+                    }
+                }) }}
+                {{ form_widget(form.parent, {
+                    'attr': {
+                        'class': 'form-select'
+                    }
+                }) }}
+                {{ form_errors(form.parent, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                <small class="form-text text-muted">
+                    <i class="bx bx-info-circle me-1"></i>
+                    Sélectionnez une catégorie parent si applicable
+                </small>
+            </div>
+        </div>
+
+        {# Boutons d'action #}
+        <div class="d-flex gap-3 justify-content-end pt-3 border-top">
+            <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary d-flex align-items-center gap-1">
+                <i class="bx bx-x"></i>
+                Annuler
+            </a>
+            <button type="submit" class="btn btn-primary d-flex align-items-center gap-1">
+                <i class="bx bx-save"></i>
+                Créer la catégorie
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
